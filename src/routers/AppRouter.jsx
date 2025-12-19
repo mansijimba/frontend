@@ -11,6 +11,7 @@ import ProfilePage from "../pages/profilePage";
 import Dashboard from "../pages/seller/sellerDashboard"
 import EditProduct from "../pages/seller/editProduct"
 import NewArrival from "../pages/newArrival"
+import ProductDetails from "../pages/productDetailsPage"
 
 export default function App() {
   return (
@@ -38,6 +39,7 @@ export default function App() {
           element={<EditProduct />}/>
           <Route path="/newArrival" element={<NewArrival/>}/>
           <Route path="/newArrival/:categoryName" element={<NewArrival />} />
+          <Route path="/product/:productId" element={<ProductDetails/>}/>
         {/*Buyer*/}
 
       </Routes>

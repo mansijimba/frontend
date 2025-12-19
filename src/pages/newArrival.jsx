@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { ShoppingCart, Heart, ArrowLeft } from "lucide-react";
@@ -15,7 +15,7 @@ export default function NewArrival() {
     const fetchProducts = async () => {
       try {
         const url = categoryName
-          ? `http://localhost:5050/api/userproduct/products?categoryName=${categoryName}`
+          ? `http://localhost:5050/api/product/products?categoryName=${categoryName}`
           : `http://localhost:5050/api/userproduct/new-arrivals`;
 
         const res = await axios.get(url);
@@ -56,7 +56,6 @@ export default function NewArrival() {
               <h1 className="text-4xl font-serif text-amber-900 tracking-wide">
                 {categoryName || "New Arrivals"}
               </h1>
-
               <div className="w-20 h-[2px] bg-amber-400 mt-3 rounded-full" />
             </div>
           </div>
@@ -74,11 +73,10 @@ export default function NewArrival() {
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 animate-fade-in">
               {products.map((product) => (
-                <div
+                <Link
+                  to={`/product/${product._id}`}
                   key={product._id}
-                  className="bg-white rounded-lg overflow-hidden
-                             transition-all duration-300
-                             hover:-translate-y-1 hover:shadow-xl"
+                  className="bg-white rounded-lg overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-xl cursor-pointer"
                 >
                   {/* Image */}
                   <div className="relative">
@@ -87,7 +85,6 @@ export default function NewArrival() {
                       alt={product.name}
                       className="w-full h-80 object-cover rounded-lg"
                     />
-
                     <button className="absolute top-3 right-3 p-2 bg-white rounded-full shadow hover:scale-105 transition">
                       <Heart className="w-4 h-4 text-red-500" />
                     </button>
@@ -95,31 +92,27 @@ export default function NewArrival() {
 
                   {/* Content */}
                   <div className="p-4">
-                    <h3 className="font-semibold text-amber-900 mb-2">
-                      {product.name}
-                    </h3>
+                    <h3 className="font-semibold text-amber-900 mb-2">{product.name}</h3>
 
                     <div className="flex items-center justify-between mb-3">
-                      <span className="text-lg font-bold text-amber-700">
-                        Rs. {product.price}
-                      </span>
+                      <span className="text-lg font-bold text-amber-700">Rs. {product.price}</span>
 
-                      <button className="p-1 hover:bg-amber-50 rounded transition">
+                      <button
+                        onClick={(e) => e.preventDefault()} // Prevent Link navigation when clicking cart
+                        className="p-1 hover:bg-amber-50 rounded transition"
+                      >
                         <ShoppingCart className="w-4 h-4 text-amber-600" />
                       </button>
                     </div>
 
-                    <button className="w-full bg-gradient-to-r from-amber-300 to-amber-400
-                                       text-amber-900 py-2 rounded
-                                       hover:from-amber-400 hover:to-amber-500 transition">
+                    <button className="w-full bg-gradient-to-r from-amber-300 to-amber-400 text-amber-900 py-2 rounded hover:from-amber-400 hover:to-amber-500 transition">
                       Buy Now
                     </button>
                   </div>
-                </div>
+                </Link>
               ))}
             </div>
           )}
-
         </div>
       </div>
     </MainLayout>
