@@ -27,7 +27,7 @@ export default function SellerDashboard() {
   return (
     <div className="flex min-h-screen">
       {/* Sidebar */}
-      <aside className="w-64 bg-amber-100 p-6 flex flex-col justify-between">
+      <aside className="w-64 bg-amber-200 p-6 flex flex-col justify-between">
         <div>
           <h1 className="text-2xl font-serif mb-6">Seller Dashboard</h1>
           <nav className="space-y-3">
