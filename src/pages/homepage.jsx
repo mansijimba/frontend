@@ -1,15 +1,15 @@
 import { useEffect, useState } from "react";
 import { Search, ShoppingCart, Heart } from "lucide-react";
 import Slider from "react-slick";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { toast } from "react-toastify";
 
 import heroImg1 from "../assets/images/deco1.jpg";
 import heroImg2 from "../assets/images/pillow1.jpg";
 import heroImg3 from "../assets/images/sweater1.jpg";
 import exclusiveImg from "../assets/images/smallgirl.png";
 
-// Import Slick CSS
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
@@ -19,6 +19,8 @@ export default function Home() {
 
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  const token = localStorage.getItem("token");
 
   const sliderSettings = {
     dots: true,
@@ -32,14 +34,16 @@ export default function Home() {
     fade: true,
   };
 
-  // Fetch new arrival products from backend
+  // 🔹 Fetch products
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const res = await axios.get("http://localhost:5050/api/userproduct/new-arrivals");
+        const res = await axios.get(
+          "http://localhost:5050/api/userproduct/new-arrivals"
+        );
         setProducts(res.data.products || []);
       } catch (err) {
-        console.error("Failed to fetch products:", err);
+        console.error(err);
       } finally {
         setLoading(false);
       }
@@ -47,137 +51,156 @@ export default function Home() {
     fetchProducts();
   }, []);
 
-  // Only show first 3 products on Home
+  // 🔹 Add to wishlist
+  const handleAddToWishlist = async (productId) => {
+    if (!token) {
+      toast.error("Please login to use wishlist");
+      return;
+    }
+
+    try {
+      await axios.post(
+        "http://localhost:5050/api/wishlist/add",
+        { productId },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      toast.success("Added to wishlist ❤️");
+    } catch {
+      toast.error("Failed to add to wishlist");
+    }
+  };
+
+  // 🔹 Add to cart
+  const handleAddToCart = async (productId) => {
+    if (!token) {
+      toast.error("Please login to add items to cart");
+      return;
+    }
+
+    try {
+      await axios.post(
+        "http://localhost:5050/api/cart/add",
+        { productId },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      toast.success("Added to cart 🛒");
+    } catch {
+      toast.error("Failed to add to cart");
+    }
+  };
+
   const displayedProducts = products.slice(0, 3);
 
   return (
     <>
       {/* Hero Section */}
-      <section className="max-w-7xl mx-auto px-4 py-8 md:py-12 flex flex-col md:flex-row items-center gap-8">
-        <div className="md:w-1/2 w-full h-96 md:h-[500px] relative">
+      <section className="max-w-7xl mx-auto px-4 py-8 flex flex-col md:flex-row gap-8">
+        <div className="md:w-1/2 relative">
           <Slider {...sliderSettings}>
             {heroImages.map((img, index) => (
-              <div key={index}>
-                <img
-                  src={img}
-                  alt={`Hero ${index + 1}`}
-                  className="w-full h-96 md:h-[500px] object-cover rounded-lg shadow-lg"
-                />
-              </div>
+              <img
+                key={index}
+                src={img}
+                alt="hero"
+                className="w-full h-[450px] object-cover rounded-lg"
+              />
             ))}
           </Slider>
-
-          {/* Search Bar overlay */}
-          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 w-11/12 max-w-md">
-            <div className="flex items-center gap-2 bg-white/95 rounded-lg px-4 py-3 shadow-lg">
-              <Search className="w-5 h-5 text-amber-600" />
-              <input
-                type="text"
-                placeholder="Search products..."
-                className="flex-1 bg-transparent outline-none text-sm"
-              />
-            </div>
-          </div>
         </div>
 
-        <div className="md:w-1/2 w-full flex flex-col justify-center text-center md:text-left gap-4">
-          <h1 className="text-4xl md:text-5xl font-serif text-amber-900">
+        <div className="md:w-1/2 flex flex-col justify-center gap-4">
+          <h1 className="text-5xl font-serif text-amber-900">
             The Perfect Gift for Someone Special
           </h1>
-          <p className="text-amber-800 text-lg md:text-xl leading-relaxed">
-            Celebrate moments of joy with handcrafted items full of love and care. Every stitch tells a story, making your gift unforgettable.
+          <p className="text-amber-800 text-lg">
+            Every stitch tells a story, making your gift unforgettable.
           </p>
-          <button className="bg-amber-300 text-amber-900 hover:bg-amber-400 px-6 py-3 rounded w-fit transition">
-            Shop Now
-          </button>
         </div>
       </section>
 
-      <p className="font-serif text-2xl md:text-3xl text-amber-900 text-center mt-4 md:mt-6">
-        Crafted with Love, Stitched with Joy.
-      </p>
-
       {/* New Arrivals */}
-      <section className="max-w-7xl mx-auto px-4 py-2 md:py-12">
-        <div className="flex items-center justify-between mb-6 md:mb-8">
-          <h2 className="text-3xl font-serif bg-gradient-to-r from-yellow-500 to-amber-700 bg-clip-text text-transparent">
+      <section className="max-w-7xl mx-auto px-4 py-12">
+        <div className="flex justify-between mb-8">
+          <h2 className="text-3xl font-serif text-amber-900">
             New Arrivals
           </h2>
           <button
             onClick={() => navigate("/newArrival")}
-            className="text-amber-600 hover:text-amber-700 text-sm font-medium"
+            className="text-amber-600"
           >
             View More →
           </button>
         </div>
 
         {loading ? (
-          <p className="text-center text-neutral-500">Loading products…</p>
-        ) : displayedProducts.length === 0 ? (
-          <p className="text-center text-neutral-500">No products available</p>
+          <p className="text-center">Loading…</p>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {displayedProducts.map((product) => (
-              <Link
+              <div
                 key={product._id}
-                to={`/product/${product._id}`}
-                className="bg-white rounded-lg overflow-hidden transition hover:shadow-lg cursor-pointer"
+                className="bg-white rounded-lg shadow hover:shadow-lg"
               >
-                <div className="relative w-full rounded-t-lg shadow-md">
+                <div className="relative">
                   <img
                     src={`http://localhost:5050/uploads/${product.image}`}
                     alt={product.name}
                     className="w-full h-80 object-cover rounded-t-lg"
                   />
-                  <button className="absolute top-3 right-3 p-2 bg-white rounded-full shadow hover:shadow-lg transition">
+
+                  {/* Wishlist */}
+                  <button
+                    onClick={() => handleAddToWishlist(product._id)}
+                    className="absolute top-3 right-3 p-2 bg-white rounded-full shadow"
+                  >
                     <Heart className="w-4 h-4 text-red-500" />
                   </button>
                 </div>
-                <div className="p-3 md:p-4">
-                  <h3 className="font-semibold text-amber-900 mb-2">{product.name}</h3>
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-lg font-bold text-amber-700">Rs. {product.price}</span>
+
+                <div className="p-4">
+                  <h3 className="font-semibold text-amber-900">
+                    {product.name}
+                  </h3>
+
+                  <div className="flex justify-between items-center mt-2">
+                    <span className="text-lg font-bold text-amber-700">
+                      Rs. {product.price}
+                    </span>
+
+                    {/* 🛒 CART ICON */}
                     <button
-                      onClick={(e) => e.preventDefault()}
-                      className="p-1 hover:bg-amber-50 rounded transition"
+                      onClick={() => handleAddToCart(product._id)}
+                      className="p-2 hover:bg-amber-50 rounded"
                     >
                       <ShoppingCart className="w-4 h-4 text-amber-600" />
                     </button>
                   </div>
-                  <button className="w-full bg-amber-300 text-amber-900 hover:bg-amber-400 px-4 py-2 rounded">
+
+                  <button className="w-full mt-3 bg-amber-300 hover:bg-amber-400 text-amber-900 py-2 rounded">
                     Buy Now
                   </button>
                 </div>
-              </Link>
+              </div>
             ))}
           </div>
         )}
       </section>
 
       {/* Exclusive Offer */}
-      <section className="w-full px-4 py-12 md:py-6">
-        <div
-          className="rounded-xl shadow-lg overflow-hidden flex flex-col md:flex-row"
-          style={{ backgroundColor: "#FBF2CD" }}
-        >
-          <div className="w-full md:w-1/2 h-80 md:h-[550px] relative md:-right-20">
-            <img
-              src={exclusiveImg}
-              alt="Exclusive offer"
-              className="w-300 h-200 object-cover rounded-r-xl"
-            />
-          </div>
-
-          <div className="w-full md:w-1/2 p-6 md:p-12 flex flex-col justify-center space-y-5">
-            <h2 className="text-4xl md:text-6xl font-serif text-amber-900">
+      <section className="px-4 py-12">
+        <div className="max-w-6xl mx-auto flex bg-[#FBF2CD] rounded-xl overflow-hidden">
+          <img
+            src={exclusiveImg}
+            alt="offer"
+            className="w-1/2 object-cover"
+          />
+          <div className="p-10">
+            <h2 className="text-5xl font-serif text-amber-900">
               Exclusive Offer
             </h2>
-            <p className="text-amber-800 text-lg md:text-xl leading-relaxed">
-              Discover premium fashion with our exclusive offer. Enjoy up to 40% off the latest designer designs. The perfect gift awaits for someone special!
+            <p className="text-amber-800 mt-4">
+              Enjoy up to 40% off our handmade collection.
             </p>
-            <button className="bg-amber-300 text-amber-900 hover:bg-amber-400 px-6 py-3 rounded w-fit transition">
-              Buy Now
-            </button>
           </div>
         </div>
       </section>

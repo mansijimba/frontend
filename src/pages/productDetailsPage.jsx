@@ -8,12 +8,14 @@ import MainLayout from "../layout/MainLayout";
 export default function ProductDetails() {
   const { productId } = useParams();
   const navigate = useNavigate();
+  const token = localStorage.getItem("token");
 
   const [product, setProduct] = useState(null);
   const [quantity, setQuantity] = useState(1);
   const [loading, setLoading] = useState(true);
   const [recommended, setRecommended] = useState([]);
 
+  // Fetch product details
   useEffect(() => {
     const fetchProduct = async () => {
       try {
@@ -29,6 +31,7 @@ export default function ProductDetails() {
     fetchProduct();
   }, [productId]);
 
+  // Fetch recommended products
   useEffect(() => {
     if (!product || !product.categoryId) return;
     const fetchRecommended = async () => {
@@ -47,10 +50,29 @@ export default function ProductDetails() {
     fetchRecommended();
   }, [product]);
 
-  const handleAddToCart = () => {
-    toast.success(`${product.name} added to cart!`);
+  // Add product to cart
+  const handleAddToCart = async () => {
+    if (!token) {
+      toast.error("Please login to add to cart");
+      navigate("/login");
+      return;
+    }
+
+    try {
+      const res = await axios.post(
+        "http://localhost:5050/api/cart",
+        { productId: product._id, quantity },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      toast.success(`${product.name} added to cart!`);
+      console.log("Cart updated:", res.data);
+    } catch (err) {
+      toast.error("Failed to add product to cart");
+      console.error(err);
+    }
   };
 
+  // Buy now
   const handleBuyNow = () => {
     navigate("/checkout", { state: { product, quantity } });
   };

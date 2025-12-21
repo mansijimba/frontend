@@ -8,10 +8,12 @@ import BuyerRegisterPage from "../pages/buyerRegister";
 import SellerRegisterPage from "../pages/sellerRegister";
 import LoginPage from "../componenets/auth/loginForm";
 import ProfilePage from "../pages/profilePage";
-import Dashboard from "../pages/seller/sellerDashboard"
-import EditProduct from "../pages/seller/editProduct"
-import NewArrival from "../pages/newArrival"
-import ProductDetails from "../pages/productDetailsPage"
+import Dashboard from "../pages/seller/sellerDashboard";
+import EditProduct from "../pages/seller/editProduct";
+import NewArrival from "../pages/newArrival";
+import ProductDetails from "../pages/productDetailsPage";
+import Wishlist from "../pages/wishlist"
+import Cart from "../pages/cart"
 
 export default function App() {
   return (
@@ -33,15 +35,14 @@ export default function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/profile" element={<ProfilePage />} />
         {/*Seller */}
-        <Route path="/dashboard/*" element={<Dashboard/>} />
-         <Route
-          path="/seller/products/edit/:id"
-          element={<EditProduct />}/>
-          <Route path="/newArrival" element={<NewArrival/>}/>
-          <Route path="/newArrival/:categoryName" element={<NewArrival />} />
-          <Route path="/product/:productId" element={<ProductDetails/>}/>
+        <Route path="/dashboard/*" element={<Dashboard />} />
+        <Route path="/seller/products/edit/:id" element={<EditProduct />} />
+        <Route path="/newArrival/:categoryName" element={<NewArrival />} />
+        <Route path="/product/:productId" element={<ProductDetails />} />
         {/*Buyer*/}
-
+        <Route path="/wishlist" element={<Wishlist />} />
+        <Route path="/newArrival" element={<NewArrival />} />
+        <Route path="/cart" element={<Cart />} />
       </Routes>
     </BrowserRouter>
   );
