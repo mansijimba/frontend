@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
-import { ShoppingCart, ArrowLeft } from "lucide-react";
+import { ShoppingCart, ArrowLeft, Store } from "lucide-react";
 import MainLayout from "../layout/MainLayout";
 
 export default function ProductDetails() {
@@ -19,7 +19,9 @@ export default function ProductDetails() {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const res = await axios.get(`http://localhost:5050/api/product/${productId}`);
+        const res = await axios.get(
+          `http://localhost:5050/api/product/${productId}`
+        );
         setProduct(res.data.product);
       } catch (err) {
         toast.error("Failed to fetch product");
@@ -31,22 +33,30 @@ export default function ProductDetails() {
     fetchProduct();
   }, [productId]);
 
-  // Fetch recommended products
+  // Fetch recommended products (same category)
   useEffect(() => {
     if (!product || !product.categoryId) return;
+
     const fetchRecommended = async () => {
       try {
-        const categoryName = product.categoryId.name;
+        const categoryName = product.categoryId?.name;
         if (!categoryName) return;
+
         const res = await axios.get(
-          `http://localhost:5050/api/userproduct/products?categoryName=${encodeURIComponent(categoryName)}`
+          `http://localhost:5050/api/userproduct/products?categoryName=${encodeURIComponent(
+            categoryName
+          )}`
         );
-        const recs = (res.data.products || []).filter(p => p._id !== product._id);
+
+        const recs = (res.data.products || []).filter(
+          (p) => p._id !== product._id
+        );
         setRecommended(recs);
       } catch (err) {
         console.error("Failed to fetch recommended products:", err);
       }
     };
+
     fetchRecommended();
   }, [product]);
 
@@ -59,13 +69,12 @@ export default function ProductDetails() {
     }
 
     try {
-      const res = await axios.post(
+      await axios.post(
         "http://localhost:5050/api/cart",
         { productId: product._id, quantity },
         { headers: { Authorization: `Bearer ${token}` } }
       );
       toast.success(`${product.name} added to cart!`);
-      console.log("Cart updated:", res.data);
     } catch (err) {
       toast.error("Failed to add product to cart");
       console.error(err);
@@ -77,21 +86,31 @@ export default function ProductDetails() {
     navigate("/checkout", { state: { product, quantity } });
   };
 
-  if (loading) return (
-    <MainLayout>
-      <div className="min-h-screen flex items-center justify-center text-neutral-500 text-lg">
-        Loading product…
-      </div>
-    </MainLayout>
-  );
+  if (loading) {
+    return (
+      <MainLayout>
+        <div className="min-h-screen flex items-center justify-center text-neutral-500 text-lg">
+          Loading product…
+        </div>
+      </MainLayout>
+    );
+  }
 
-  if (!product) return (
-    <MainLayout>
-      <div className="min-h-screen flex items-center justify-center text-neutral-500 text-lg">
-        Product not found
-      </div>
-    </MainLayout>
-  );
+  if (!product) {
+    return (
+      <MainLayout>
+        <div className="min-h-screen flex items-center justify-center text-neutral-500 text-lg">
+          Product not found
+        </div>
+      </MainLayout>
+    );
+  }
+
+  // Seller (shop) name from backend fullName
+  const sellerName =
+    product.sellerId?.role === "seller"
+      ? product.sellerId?.fullName
+      : null;
 
   return (
     <MainLayout>
@@ -99,15 +118,15 @@ export default function ProductDetails() {
         {/* Back Button */}
         <button
           onClick={() => navigate(-1)}
-          className="flex items-center gap-2 text-amber-900 mb-10 font-medium hover:text-amber-700 transition-all duration-300"
+          className="flex items-center gap-2 text-amber-900 mb-10 font-medium hover:text-amber-700 transition"
         >
           <ArrowLeft className="w-5 h-5" /> Back
         </button>
 
         <div className="flex flex-col md:flex-row gap-14 md:gap-20">
           {/* Left: Product Image */}
-          <div className="md:w-1/2 w-full relative group">
-            <div className="overflow-hidden rounded-3xl shadow-2xl transform transition-all duration-500 group-hover:scale-105">
+          <div className="md:w-1/2 w-full">
+            <div className="overflow-hidden rounded-3xl shadow-2xl">
               <img
                 src={`http://localhost:5050/uploads/${product.image}`}
                 alt={product.name}
@@ -117,10 +136,24 @@ export default function ProductDetails() {
           </div>
 
           {/* Right: Product Info */}
-          <div className="md:w-1/2 w-full flex flex-col gap-6">
+          <div className="md:w-1/2 w-full flex flex-col gap-4">
             <h1 className="text-4xl md:text-5xl font-serif bg-gradient-to-r from-yellow-500 via-amber-500 to-orange-500 bg-clip-text text-transparent">
               {product.name}
             </h1>
+
+            {/* Seller / Shop Name */}
+            {sellerName && (
+              <div className="flex items-center gap-2 text-sm md:text-base text-neutral-600"
+               onClick={() => navigate(`/shop/${product.sellerId._id}`)}>
+                <Store className="w-4 h-4 text-amber-700" />
+                <span>
+                  Sold by{" "}
+                  <span className="text-amber-700 font-medium">
+                    {product.sellerId.fullName}
+                  </span>
+                </span>
+              </div>
+            )}
 
             <p className="text-amber-800 text-lg md:text-xl leading-relaxed mt-2">
               {product.description}
@@ -130,9 +163,16 @@ export default function ProductDetails() {
               <span className="text-3xl font-bold text-amber-700">
                 Rs. {product.price}
               </span>
-              <span className={`text-sm px-3 py-1 rounded-full font-medium
-                ${product.stock > 0 ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
-                {product.stock > 0 ? `In Stock: ${product.stock}` : 'Out of Stock'}
+              <span
+                className={`text-sm px-3 py-1 rounded-full font-medium ${
+                  product.stock > 0
+                    ? "bg-green-100 text-green-800"
+                    : "bg-red-100 text-red-800"
+                }`}
+              >
+                {product.stock > 0
+                  ? `In Stock: ${product.stock}`
+                  : "Out of Stock"}
               </span>
             </div>
 
@@ -144,11 +184,15 @@ export default function ProductDetails() {
                   onClick={() => setQuantity(Math.max(1, quantity - 1))}
                   className="px-4 py-2 text-amber-700 font-bold hover:bg-amber-100 transition"
                 >
-                  -
+                  −
                 </button>
-                <span className="px-6 py-2 bg-white text-neutral-700 font-semibold">{quantity}</span>
+                <span className="px-6 py-2 bg-white text-neutral-700 font-semibold">
+                  {quantity}
+                </span>
                 <button
-                  onClick={() => setQuantity(Math.min(product.stock, quantity + 1))}
+                  onClick={() =>
+                    setQuantity(Math.min(product.stock, quantity + 1))
+                  }
                   className="px-4 py-2 text-amber-700 font-bold hover:bg-amber-100 transition"
                 >
                   +
@@ -160,14 +204,14 @@ export default function ProductDetails() {
             <div className="flex flex-col md:flex-row gap-4 mt-8">
               <button
                 onClick={handleAddToCart}
-                className="flex items-center justify-center gap-2 bg-amber-300 text-amber-900 px-6 py-3 rounded-2xl font-semibold hover:bg-amber-400 shadow-xl transition-transform transform hover:scale-105"
+                className="flex items-center justify-center gap-2 bg-amber-300 text-amber-900 px-6 py-3 rounded-2xl font-semibold hover:bg-amber-400 shadow-xl transition-transform hover:scale-105"
               >
                 <ShoppingCart className="w-5 h-5" /> Add to Cart
               </button>
 
               <button
                 onClick={handleBuyNow}
-                className="bg-gradient-to-r from-amber-500 to-orange-500 text-white px-6 py-3 rounded-2xl font-semibold shadow-xl hover:from-amber-600 hover:to-orange-600 transition-transform transform hover:scale-105"
+                className="bg-gradient-to-r from-amber-500 to-orange-500 text-white px-6 py-3 rounded-2xl font-semibold shadow-xl transition-transform hover:scale-105"
               >
                 Buy Now
               </button>
@@ -178,13 +222,16 @@ export default function ProductDetails() {
         {/* Recommended Products */}
         {recommended.length > 0 && (
           <div className="mt-20">
-            <h2 className="text-3xl font-serif text-amber-900 mb-8 border-b-2 border-amber-300 pb-2">You Might Also Like</h2>
+            <h2 className="text-3xl font-serif text-amber-900 mb-8 border-b-2 border-amber-300 pb-2">
+              You Might Also Like
+            </h2>
+
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-              {recommended.map(p => (
+              {recommended.map((p) => (
                 <div
                   key={p._id}
                   onClick={() => navigate(`/product/${p._id}`)}
-                  className="cursor-pointer bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transform transition-all duration-300 hover:scale-105"
+                  className="cursor-pointer bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transform transition-all hover:scale-105"
                 >
                   <img
                     src={`http://localhost:5050/uploads/${p.image}`}
@@ -192,8 +239,12 @@ export default function ProductDetails() {
                     className="w-full h-44 object-cover rounded-t-2xl"
                   />
                   <div className="p-3">
-                    <h3 className="text-amber-900 font-semibold truncate">{p.name}</h3>
-                    <span className="text-amber-700 font-bold">Rs. {p.price}</span>
+                    <h3 className="text-amber-900 font-semibold truncate">
+                      {p.name}
+                    </h3>
+                    <span className="text-amber-700 font-bold">
+                      Rs. {p.price}
+                    </span>
                   </div>
                 </div>
               ))}

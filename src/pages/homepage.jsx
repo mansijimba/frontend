@@ -22,6 +22,11 @@ export default function Home() {
 
   const token = localStorage.getItem("token");
 
+  // 🔹 Navigate to product details
+  const goToProductDetails = (productId) => {
+    navigate(`/product/${productId}`);
+  };
+
   const sliderSettings = {
     dots: true,
     infinite: true,
@@ -34,7 +39,7 @@ export default function Home() {
     fade: true,
   };
 
-  // 🔹 Fetch products
+  // 🔹 Fetch new arrivals
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -139,18 +144,23 @@ export default function Home() {
             {displayedProducts.map((product) => (
               <div
                 key={product._id}
-                className="bg-white rounded-lg shadow hover:shadow-lg"
+                className="bg-white rounded-lg shadow hover:shadow-lg transition"
               >
+                {/* Image → Product Details */}
                 <div className="relative">
                   <img
                     src={`http://localhost:5050/uploads/${product.image}`}
                     alt={product.name}
-                    className="w-full h-80 object-cover rounded-t-lg"
+                    className="w-full h-80 object-cover rounded-t-lg cursor-pointer"
+                    onClick={() => goToProductDetails(product._id)}
                   />
 
                   {/* Wishlist */}
                   <button
-                    onClick={() => handleAddToWishlist(product._id)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleAddToWishlist(product._id);
+                    }}
                     className="absolute top-3 right-3 p-2 bg-white rounded-full shadow"
                   >
                     <Heart className="w-4 h-4 text-red-500" />
@@ -158,7 +168,11 @@ export default function Home() {
                 </div>
 
                 <div className="p-4">
-                  <h3 className="font-semibold text-amber-900">
+                  {/* Product Name → Product Details */}
+                  <h3
+                    onClick={() => goToProductDetails(product._id)}
+                    className="font-semibold text-amber-900 cursor-pointer hover:underline"
+                  >
                     {product.name}
                   </h3>
 
@@ -167,16 +181,23 @@ export default function Home() {
                       Rs. {product.price}
                     </span>
 
-                    {/* 🛒 CART ICON */}
+                    {/* Cart */}
                     <button
-                      onClick={() => handleAddToCart(product._id)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleAddToCart(product._id);
+                      }}
                       className="p-2 hover:bg-amber-50 rounded"
                     >
                       <ShoppingCart className="w-4 h-4 text-amber-600" />
                     </button>
                   </div>
 
-                  <button className="w-full mt-3 bg-amber-300 hover:bg-amber-400 text-amber-900 py-2 rounded">
+                  {/* Buy Now → Product Details */}
+                  <button
+                    onClick={() => goToProductDetails(product._id)}
+                    className="w-full mt-3 bg-amber-300 hover:bg-amber-400 text-amber-900 py-2 rounded"
+                  >
                     Buy Now
                   </button>
                 </div>

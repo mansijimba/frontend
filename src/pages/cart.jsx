@@ -63,11 +63,14 @@ export default function CartDrawer({ isOpen, onClose }) {
 
   return (
     <div className="fixed inset-0 z-50 flex justify-end bg-black/50 backdrop-blur-sm">
-      <div className="w-full sm:w-96 bg-white h-full shadow-2xl p-6 animate-slide-in-right flex flex-col">
-
+      <div
+        className="bg-white h-full shadow-2xl p-6 animate-slide-in-right flex flex-col w-full sm:w-[600px]"
+      >
         {/* Header */}
         <div className="flex justify-between items-center mb-6 border-b pb-3">
-          <h2 className="text-2xl font-semibold font-serif text-amber-900">Your Cart</h2>
+          <h2 className="text-3xl font-serif font-light bg-clip-text text-transparent bg-gradient-to-r from-amber-400 to-amber-700">
+            Your Cart
+          </h2>
           <X
             className="cursor-pointer w-6 h-6 text-gray-700 hover:text-red-500 transition-colors"
             onClick={onClose}
@@ -79,8 +82,7 @@ export default function CartDrawer({ isOpen, onClose }) {
           <p className="text-sm text-gray-500 mt-10 text-center">Your cart is empty</p>
         ) : (
           <div className="flex-1 flex flex-col">
-
-            {/* Horizontal slider */}
+            {/* Horizontal slider of products */}
             <div className="flex gap-4 overflow-x-auto pb-4">
               {cart.items.map((item) => (
                 <div
@@ -138,7 +140,7 @@ export default function CartDrawer({ isOpen, onClose }) {
               ))}
             </div>
 
-            {/* Total & Secure Checkout */}
+            {/* Total & Checkout */}
             <div className="mt-4 border-t pt-4 flex flex-col gap-3">
               <div className="flex justify-between text-xl font-semibold text-gray-800">
                 <span>Total:</span>
