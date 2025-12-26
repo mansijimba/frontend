@@ -126,9 +126,7 @@ export default function Home() {
       {/* New Arrivals */}
       <section className="max-w-7xl mx-auto px-4 py-12">
         <div className="flex justify-between mb-8">
-          <h2 className="text-3xl font-serif text-amber-900">
-            New Arrivals
-          </h2>
+          <h2 className="text-3xl font-serif text-amber-900">New Arrivals</h2>
           <button
             onClick={() => navigate("/newArrival")}
             className="text-amber-600"
@@ -208,20 +206,44 @@ export default function Home() {
       </section>
 
       {/* Exclusive Offer */}
-      <section className="px-4 py-12">
-        <div className="max-w-6xl mx-auto flex bg-[#FBF2CD] rounded-xl overflow-hidden">
-          <img
-            src={exclusiveImg}
-            alt="offer"
-            className="w-1/2 object-cover"
-          />
-          <div className="p-10">
-            <h2 className="text-5xl font-serif text-amber-900">
-              Exclusive Offer
-            </h2>
-            <p className="text-amber-800 mt-4">
-              Enjoy up to 40% off our handmade collection.
-            </p>
+      <section className="px-4 py-10">
+        <div className="max-w-6xl mx-auto">
+          <div className="relative flex flex-col md:flex-row items-center bg-gradient-to-r from-[#FBF2CD] via-[#FFF6DC] to-[#FDF7EA] rounded-3xl overflow-hidden shadow-[0_30px_80px_rgba(0,0,0,0.12)]">
+            {/* Image */}
+            <div className="md:w-1/2 w-full h-[400px] overflow-hidden">
+              <img
+                src={exclusiveImg}
+                alt="Exclusive handmade offer"
+                className="w-96 h-full object-cover scale-105 hover:scale-110 transition-transform duration-700"
+              />
+            </div>
+
+            {/* Content */}
+            <div className="md:w-1/2 w-full p-12 text-center md:text-left">
+              <h2 className="text-4xl md:text-5xl font-serif font-light bg-clip-text text-transparent bg-gradient-to-r from-amber-500 to-amber-800">
+                Exclusive Offer
+              </h2>
+
+              <p className="text-amber-800 mt-5 text-lg leading-relaxed">
+                Discover thoughtfully handcrafted pieces made with love. Enjoy{" "}
+                <span className="font-semibold">up to 40% off</span> on our
+                limited handmade collection.
+              </p>
+
+              <button
+                onClick={() => navigate("/shop")}
+                className="mt-8 inline-flex items-center justify-center px-10 py-3 rounded-full
+          bg-gradient-to-r from-amber-500 to-amber-600
+          text-white font-medium tracking-wide
+          shadow-lg hover:shadow-2xl hover:from-amber-600 hover:to-amber-700
+          transition-all duration-300"
+              >
+                Buy Now
+              </button>
+            </div>
+
+            {/* Soft decorative blur */}
+            <div className="absolute -top-20 -right-20 w-72 h-72 bg-amber-300/30 rounded-full blur-3xl" />
           </div>
         </div>
       </section>

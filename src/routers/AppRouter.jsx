@@ -15,6 +15,7 @@ import ProductDetails from "../pages/productDetailsPage";
 import Wishlist from "../pages/wishlist"
 import Cart from "../pages/cart"
 import ShopPage from "../pages/shopPage";
+import CheckoutPage from "../pages/checkoutPage";
 
 export default function App() {
   return (
@@ -45,6 +46,7 @@ export default function App() {
         <Route path="/newArrival" element={<NewArrival />} />
         <Route path="/cart" element={<Cart />} />
         <Route path="/shop/:sellerId" element={<ShopPage/>}/>
+        <Route path="/checkout" element={<CheckoutPage/>} />
       </Routes>
     </BrowserRouter>
   );
