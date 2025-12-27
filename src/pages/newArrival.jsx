@@ -74,7 +74,7 @@ export default function NewArrival() {
 
       setWishlist([...wishlist, productId]);
       toast.success("Added to wishlist ❤️");
-    } catch (err) {
+    } catch {
       toast.error("Failed to add to wishlist");
     }
   };
@@ -94,9 +94,24 @@ export default function NewArrival() {
       );
 
       toast.success("Added to cart 🛒");
-    } catch (err) {
+    } catch {
       toast.error("Failed to add to cart");
     }
+  };
+
+  // 🔥 Buy Now → Direct Checkout without adding to cart
+  const buyNow = (e, product) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (!token) {
+      toast.error("Please login to continue");
+      navigate("/login");
+      return;
+    }
+
+    // Navigate to checkout page and pass product via state
+    navigate("/checkout", { state: { product } });
   };
 
   if (loading) {
@@ -111,7 +126,6 @@ export default function NewArrival() {
     <MainLayout>
       <div className="min-h-screen bg-gradient-to-b from-[#FAF8F5] to-[#F3EFEA]">
         <div className="max-w-7xl mx-auto px-4 py-14">
-
           {/* Header */}
           <div className="flex items-center gap-4 mb-10">
             <button
@@ -142,8 +156,7 @@ export default function NewArrival() {
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
               {products.map((product) => (
-                <Link
-                  to={`/product/${product._id}`}
+                <div
                   key={product._id}
                   className="bg-white rounded-lg overflow-hidden transition hover:-translate-y-1 hover:shadow-xl"
                 >
@@ -198,11 +211,15 @@ export default function NewArrival() {
                       </button>
                     </div>
 
-                    <button className="w-full bg-gradient-to-r from-amber-300 to-amber-400 text-amber-900 py-2 rounded hover:from-amber-400 hover:to-amber-500 transition">
+                    {/* Buy Now */}
+                    <button
+                      onClick={(e) => buyNow(e, product)}
+                      className="w-full bg-gradient-to-r from-amber-300 to-amber-400 text-amber-900 py-2 rounded hover:from-amber-400 hover:to-amber-500 transition"
+                    >
                       Buy Now
                     </button>
                   </div>
-                </Link>
+                </div>
               ))}
             </div>
           )}

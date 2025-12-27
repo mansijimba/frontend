@@ -16,6 +16,8 @@ import Wishlist from "../pages/wishlist"
 import Cart from "../pages/cart"
 import ShopPage from "../pages/shopPage";
 import CheckoutPage from "../pages/checkoutPage";
+import DealsPage from "../pages/deals";
+import Deals from "../pages/seller/CreateDeals"
 
 export default function App() {
   return (
@@ -41,12 +43,14 @@ export default function App() {
         <Route path="/seller/products/edit/:id" element={<EditProduct />} />
         <Route path="/newArrival/:categoryName" element={<NewArrival />} />
         <Route path="/product/:productId" element={<ProductDetails />} />
+        <Route path="/createdeals" element={<Deals/>}/>
         {/*Buyer*/}
         <Route path="/wishlist" element={<Wishlist />} />
         <Route path="/newArrival" element={<NewArrival />} />
         <Route path="/cart" element={<Cart />} />
         <Route path="/shop/:sellerId" element={<ShopPage/>}/>
         <Route path="/checkout" element={<CheckoutPage/>} />
+        <Route path="/deals" element={<DealsPage/>} />
       </Routes>
     </BrowserRouter>
   );

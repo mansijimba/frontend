@@ -50,9 +50,7 @@ export default function Header() {
 
           {/* Navigation */}
           <nav className="hidden md:flex gap-8">
-            <Link to="/" className="text-amber-900 hover:text-amber-600">
-              Home
-            </Link>
+            <Link to="/" className="text-amber-900 hover:text-amber-600">Home</Link>
 
             <div className="relative group">
               <span className="flex items-center gap-1 cursor-pointer text-amber-900 hover:text-amber-600">
@@ -75,6 +73,11 @@ export default function Header() {
                 )}
               </div>
             </div>
+
+            {/* Deals link */}
+            <Link to="/deals" className="text-amber-900 hover:text-amber-600">
+              Deals
+            </Link>
           </nav>
 
           {/* Icons + Auth */}
@@ -116,7 +119,7 @@ export default function Header() {
         </div>
       </header>
 
-      {/* 🛒 Cart Drawer */}
+      {/* Cart Drawer */}
       <CartDrawer
         isOpen={isCartOpen}
         onClose={() => setIsCartOpen(false)}

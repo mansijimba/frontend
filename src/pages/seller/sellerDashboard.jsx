@@ -1,11 +1,12 @@
 import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import { Package, Box, User, ShoppingCart, LogOut } from "lucide-react";
+import { Package, Box, User, ShoppingCart, LogOut, Tag } from "lucide-react"; // added Tag for Deals
 import { AuthContext } from "../../auth/AuthProvider";
 
 import AddProduct from "../seller/AddProduct";
 import SellerProducts from "../seller/sellerProduct";
 import EditProduct from "../seller/editProduct";
+import CreateDeals from "../seller/CreateDeals";
 
 export default function SellerDashboard() {
   const [activeTab, setActiveTab] = useState("addProduct");
@@ -41,6 +42,11 @@ export default function SellerDashboard() {
               icon={<Box />}
               onClick={() => setActiveTab("myProducts")}
             />
+            <SidebarBtn
+              label="Deals"
+              icon={<Tag />}
+              onClick={() => setActiveTab("deals")}
+            />
             <SidebarBtn label="Profile" icon={<User />} />
             <SidebarBtn label="Orders" icon={<ShoppingCart />} />
           </nav>
@@ -72,6 +78,7 @@ export default function SellerDashboard() {
             goBack={goBackToProducts}
           />
         )}
+        {activeTab === "deals" && <CreateDeals />}
       </main>
     </div>
   );

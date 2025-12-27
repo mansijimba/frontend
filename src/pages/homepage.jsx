@@ -94,6 +94,18 @@ export default function Home() {
     }
   };
 
+  // 🔥 Buy Now → Direct Checkout (no cart)
+  const buyNow = (product) => {
+    if (!token) {
+      toast.error("Please login to continue");
+      navigate("/login");
+      return;
+    }
+
+    // Navigate to checkout page and pass product via state
+    navigate("/checkout", { state: { product } });
+  };
+
   const displayedProducts = products.slice(0, 3);
 
   return (
@@ -144,7 +156,7 @@ export default function Home() {
                 key={product._id}
                 className="bg-white rounded-lg shadow hover:shadow-lg transition"
               >
-                {/* Image → Product Details */}
+                {/* Image */}
                 <div className="relative">
                   <img
                     src={`http://localhost:5050/uploads/${product.image}`}
@@ -166,7 +178,6 @@ export default function Home() {
                 </div>
 
                 <div className="p-4">
-                  {/* Product Name → Product Details */}
                   <h3
                     onClick={() => goToProductDetails(product._id)}
                     className="font-semibold text-amber-900 cursor-pointer hover:underline"
@@ -191,9 +202,9 @@ export default function Home() {
                     </button>
                   </div>
 
-                  {/* Buy Now → Product Details */}
+                  {/* Buy Now → Checkout */}
                   <button
-                    onClick={() => goToProductDetails(product._id)}
+                    onClick={() => buyNow(product)}
                     className="w-full mt-3 bg-amber-300 hover:bg-amber-400 text-amber-900 py-2 rounded"
                   >
                     Buy Now
@@ -209,7 +220,6 @@ export default function Home() {
       <section className="px-4 py-10">
         <div className="max-w-6xl mx-auto">
           <div className="relative flex flex-col md:flex-row items-center bg-gradient-to-r from-[#FBF2CD] via-[#FFF6DC] to-[#FDF7EA] rounded-3xl overflow-hidden shadow-[0_30px_80px_rgba(0,0,0,0.12)]">
-            {/* Image */}
             <div className="md:w-1/2 w-full h-[400px] overflow-hidden">
               <img
                 src={exclusiveImg}
@@ -218,7 +228,6 @@ export default function Home() {
               />
             </div>
 
-            {/* Content */}
             <div className="md:w-1/2 w-full p-12 text-center md:text-left">
               <h2 className="text-4xl md:text-5xl font-serif font-light bg-clip-text text-transparent bg-gradient-to-r from-amber-500 to-amber-800">
                 Exclusive Offer
@@ -233,16 +242,15 @@ export default function Home() {
               <button
                 onClick={() => navigate("/shop")}
                 className="mt-8 inline-flex items-center justify-center px-10 py-3 rounded-full
-          bg-gradient-to-r from-amber-500 to-amber-600
-          text-white font-medium tracking-wide
-          shadow-lg hover:shadow-2xl hover:from-amber-600 hover:to-amber-700
-          transition-all duration-300"
+                bg-gradient-to-r from-amber-500 to-amber-600
+                text-white font-medium tracking-wide
+                shadow-lg hover:shadow-2xl hover:from-amber-600 hover:to-amber-700
+                transition-all duration-300"
               >
                 Buy Now
               </button>
             </div>
 
-            {/* Soft decorative blur */}
             <div className="absolute -top-20 -right-20 w-72 h-72 bg-amber-300/30 rounded-full blur-3xl" />
           </div>
         </div>
