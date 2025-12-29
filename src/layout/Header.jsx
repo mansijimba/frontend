@@ -39,22 +39,23 @@ export default function Header() {
     <>
       <header className="border-b bg-[#FFFDF5]">
         <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
-
           {/* Logo */}
-          <div className="flex items-center gap-2">
+          <Link to="/" className="flex items-center gap-2">
             <img src={logo} className="w-10 h-10" alt="Logo" />
             <span className="font-italianno text-3xl text-amber-900">
               Loops and Stitches
             </span>
-          </div>
+          </Link>
 
           {/* Navigation */}
           <nav className="hidden md:flex gap-8">
-            <Link to="/" className="text-amber-900 hover:text-amber-600">Home</Link>
+            <Link to="/" className="text-amber-900 hover:text-amber-600">
+              Home
+            </Link>
 
             <div className="relative group">
               <span className="flex items-center gap-1 cursor-pointer text-amber-900 hover:text-amber-600">
-                New Arrivals <ChevronDown className="w-4 h-4" />
+                Products <ChevronDown className="w-4 h-4" />
               </span>
 
               <div className="absolute top-full bg-white shadow rounded opacity-0 invisible group-hover:visible group-hover:opacity-100">
@@ -104,11 +105,17 @@ export default function Header() {
               </Link>
             ) : (
               <>
-                <Link to="/role" className="text-amber-900 hover:text-amber-600">
+                <Link
+                  to="/role"
+                  className="text-amber-900 hover:text-amber-600"
+                >
                   REGISTER
                 </Link>
                 <span className="text-amber-700">/</span>
-                <Link to="/login" className="text-amber-900 hover:text-amber-600">
+                <Link
+                  to="/login"
+                  className="text-amber-900 hover:text-amber-600"
+                >
                   LOGIN
                 </Link>
               </>
@@ -120,10 +127,7 @@ export default function Header() {
       </header>
 
       {/* Cart Drawer */}
-      <CartDrawer
-        isOpen={isCartOpen}
-        onClose={() => setIsCartOpen(false)}
-      />
+      <CartDrawer isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
     </>
   );
 }

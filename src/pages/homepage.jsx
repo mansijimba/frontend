@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
 
-import heroImg1 from "../assets/images/deco1.jpg";
+import heroImg1 from "../assets/images/shoes.jpg";
 import heroImg2 from "../assets/images/pillow1.jpg";
 import heroImg3 from "../assets/images/sweater1.jpg";
 import exclusiveImg from "../assets/images/smallgirl.png";
@@ -19,10 +19,11 @@ export default function Home() {
 
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const token = localStorage.getItem("token");
 
-  // 🔹 Navigate to product details
+  // Navigate to product details
   const goToProductDetails = (productId) => {
     navigate(`/product/${productId}`);
   };
@@ -39,7 +40,7 @@ export default function Home() {
     fade: true,
   };
 
-  // 🔹 Fetch new arrivals
+  // Fetch new arrivals
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -56,7 +57,7 @@ export default function Home() {
     fetchProducts();
   }, []);
 
-  // 🔹 Add to wishlist
+  // Add to wishlist
   const handleAddToWishlist = async (productId) => {
     if (!token) {
       toast.error("Please login to use wishlist");
@@ -75,7 +76,7 @@ export default function Home() {
     }
   };
 
-  // 🔹 Add to cart
+  // Add to cart
   const handleAddToCart = async (productId) => {
     if (!token) {
       toast.error("Please login to add items to cart");
@@ -94,7 +95,7 @@ export default function Home() {
     }
   };
 
-  // 🔥 Buy Now → Direct Checkout (no cart)
+  // Buy Now → Direct Checkout
   const buyNow = (product) => {
     if (!token) {
       toast.error("Please login to continue");
@@ -102,7 +103,6 @@ export default function Home() {
       return;
     }
 
-    // Navigate to checkout page and pass product via state
     navigate("/checkout", { state: { product } });
   };
 
@@ -132,6 +132,39 @@ export default function Home() {
           <p className="text-amber-800 text-lg">
             Every stitch tells a story, making your gift unforgettable.
           </p>
+          {/* 🔹 Search Bar Below Hero Text */}
+          <div className="mt-6 relative w-full md:w-3/4">
+            <input
+              type="text"
+              placeholder="Search products..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full px-4 py-3 rounded-full border border-amber-300 focus:outline-none focus:ring-2 focus:ring-amber-400"
+            />
+            <Search className="absolute right-4 top-1/2 -translate-y-1/2 text-amber-400 w-5 h-5" />
+
+            {/* 🔹 Suggestions dropdown */}
+            {searchQuery && (
+              <div className="absolute mt-1 w-full bg-white border border-amber-200 rounded-lg shadow-lg z-50 max-h-60 overflow-y-auto">
+                {products
+                  .filter((p) =>
+                    p.name.toLowerCase().includes(searchQuery.toLowerCase())
+                  )
+                  .map((p) => (
+                    <div
+                      key={p._id}
+                      onClick={() => {
+                        navigate(`/product/${p._id}`);
+                        setSearchQuery("");
+                      }}
+                      className="px-4 py-2 hover:bg-amber-50 cursor-pointer text-amber-900"
+                    >
+                      {p.name}
+                    </div>
+                  ))}
+              </div>
+            )}
+          </div>
         </div>
       </section>
 
@@ -151,67 +184,71 @@ export default function Home() {
           <p className="text-center">Loading…</p>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {displayedProducts.map((product) => (
-              <div
-                key={product._id}
-                className="bg-white rounded-lg shadow hover:shadow-lg transition"
-              >
-                {/* Image */}
-                <div className="relative">
-                  <img
-                    src={`http://localhost:5050/uploads/${product.image}`}
-                    alt={product.name}
-                    className="w-full h-80 object-cover rounded-t-lg cursor-pointer"
-                    onClick={() => goToProductDetails(product._id)}
-                  />
+            {displayedProducts
+              .filter((p) =>
+                p.name.toLowerCase().includes(searchQuery.toLowerCase())
+              )
+              .map((product) => (
+                <div
+                  key={product._id}
+                  className="bg-white rounded-lg shadow hover:shadow-lg transition"
+                >
+                  {/* Image */}
+                  <div className="relative">
+                    <img
+                      src={`http://localhost:5050/uploads/${product.image}`}
+                      alt={product.name}
+                      className="w-full h-80 object-cover rounded-t-lg cursor-pointer"
+                      onClick={() => goToProductDetails(product._id)}
+                    />
 
-                  {/* Wishlist */}
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleAddToWishlist(product._id);
-                    }}
-                    className="absolute top-3 right-3 p-2 bg-white rounded-full shadow"
-                  >
-                    <Heart className="w-4 h-4 text-red-500" />
-                  </button>
-                </div>
-
-                <div className="p-4">
-                  <h3
-                    onClick={() => goToProductDetails(product._id)}
-                    className="font-semibold text-amber-900 cursor-pointer hover:underline"
-                  >
-                    {product.name}
-                  </h3>
-
-                  <div className="flex justify-between items-center mt-2">
-                    <span className="text-lg font-bold text-amber-700">
-                      Rs. {product.price}
-                    </span>
-
-                    {/* Cart */}
+                    {/* Wishlist */}
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
-                        handleAddToCart(product._id);
+                        handleAddToWishlist(product._id);
                       }}
-                      className="p-2 hover:bg-amber-50 rounded"
+                      className="absolute top-3 right-3 p-2 bg-white rounded-full shadow"
                     >
-                      <ShoppingCart className="w-4 h-4 text-amber-600" />
+                      <Heart className="w-4 h-4 text-red-500" />
                     </button>
                   </div>
 
-                  {/* Buy Now → Checkout */}
-                  <button
-                    onClick={() => buyNow(product)}
-                    className="w-full mt-3 bg-amber-300 hover:bg-amber-400 text-amber-900 py-2 rounded"
-                  >
-                    Buy Now
-                  </button>
+                  <div className="p-4">
+                    <h3
+                      onClick={() => goToProductDetails(product._id)}
+                      className="font-semibold text-amber-900 cursor-pointer hover:underline"
+                    >
+                      {product.name}
+                    </h3>
+
+                    <div className="flex justify-between items-center mt-2">
+                      <span className="text-lg font-bold text-amber-700">
+                        Rs. {product.price}
+                      </span>
+
+                      {/* Cart */}
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleAddToCart(product._id);
+                        }}
+                        className="p-2 hover:bg-amber-50 rounded"
+                      >
+                        <ShoppingCart className="w-4 h-4 text-amber-600" />
+                      </button>
+                    </div>
+
+                    {/* Buy Now → Checkout */}
+                    <button
+                      onClick={() => buyNow(product)}
+                      className="w-full mt-3 bg-amber-300 hover:bg-amber-400 text-amber-900 py-2 rounded"
+                    >
+                      Buy Now
+                    </button>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
           </div>
         )}
       </section>
@@ -235,12 +272,12 @@ export default function Home() {
 
               <p className="text-amber-800 mt-5 text-lg leading-relaxed">
                 Discover thoughtfully handcrafted pieces made with love. Enjoy{" "}
-                <span className="font-semibold">up to 40% off</span> on our
+                <span className="font-semibold">up to 19% off</span> on our
                 limited handmade collection.
               </p>
 
               <button
-                onClick={() => navigate("/shop")}
+                onClick={() => navigate("/deals")}
                 className="mt-8 inline-flex items-center justify-center px-10 py-3 rounded-full
                 bg-gradient-to-r from-amber-500 to-amber-600
                 text-white font-medium tracking-wide
