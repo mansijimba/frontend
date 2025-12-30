@@ -17,7 +17,8 @@ import Cart from "../pages/cart"
 import ShopPage from "../pages/shopPage";
 import CheckoutPage from "../pages/checkoutPage";
 import DealsPage from "../pages/deals";
-import Deals from "../pages/seller/CreateDeals"
+import Deals from "../pages/seller/CreateDeals";
+import Products from "../pages/producPage"
 
 export default function App() {
   return (
@@ -51,6 +52,7 @@ export default function App() {
         <Route path="/shop/:sellerId" element={<ShopPage/>}/>
         <Route path="/checkout" element={<CheckoutPage/>} />
         <Route path="/deals" element={<DealsPage/>} />
+        <Route path="/products" element={<Products/>}/>
       </Routes>
     </BrowserRouter>
   );

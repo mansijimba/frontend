@@ -1,9 +1,12 @@
-import insta from "../assets/logo/insta.png"
-import facebook from "../assets/logo/facebook.png"
+import insta from "../assets/logo/insta.png";
+import facebook from "../assets/logo/facebook.png";
 
 export default function Footer() {
   return (
-    <footer className="mt-12" style={{ backgroundColor: "#8f7e3dff", color: "#fff" }}>
+    <footer
+      className="mt-12"
+      style={{ backgroundColor: "#8f7e3dff", color: "#fff" }}
+    >
       <div className="max-w-7xl mx-auto px-4 py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
           {/* Steps and Stitches */}
@@ -39,7 +42,7 @@ export default function Footer() {
             <ul className="space-y-2">
               <li>
                 <a
-                  href="#"
+                  href="/products"
                   className="text-white hover:text-gray-200 text-sm transition"
                 >
                   Products
