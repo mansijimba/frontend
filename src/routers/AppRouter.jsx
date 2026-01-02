@@ -19,6 +19,8 @@ import CheckoutPage from "../pages/checkoutPage";
 import DealsPage from "../pages/deals";
 import Deals from "../pages/seller/CreateDeals";
 import Products from "../pages/producPage"
+import Order from "../pages/seller/sellerOrder"
+import SellerProfile from "../pages/seller/sellerProfile"
 
 export default function App() {
   return (
@@ -45,6 +47,8 @@ export default function App() {
         <Route path="/newArrival/:categoryName" element={<NewArrival />} />
         <Route path="/product/:productId" element={<ProductDetails />} />
         <Route path="/createdeals" element={<Deals/>}/>
+        <Route path="/order" element={<Order/>}/>
+        <Route path="/sellerProfile" element={<SellerProfile/>}/>
         {/*Buyer*/}
         <Route path="/wishlist" element={<Wishlist />} />
         <Route path="/newArrival" element={<NewArrival />} />

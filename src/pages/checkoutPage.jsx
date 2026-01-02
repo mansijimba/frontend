@@ -17,8 +17,8 @@ export default function CheckoutPage() {
   const [isEditingAddress, setIsEditingAddress] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState("cod");
 
+  // Prefill address from user profile
   useEffect(() => {
-    // Fetch user profile to prefill address
     const fetchUserAddress = async () => {
       try {
         const token = localStorage.getItem("token");
@@ -72,19 +72,48 @@ export default function CheckoutPage() {
     0
   );
 
-  const handlePlaceOrder = () => {
+  const handlePlaceOrder = async () => {
     if (!address.trim()) {
       toast.error("Please enter delivery address");
       return;
     }
 
-    if (paymentMethod === "esewa") {
-      toast.info("Redirecting to eSewa...");
-    } else {
-      toast.success("Order placed successfully!");
-    }
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        navigate("/login");
+        return;
+      }
 
-    navigate("/"); // Go back to homepage
+      // Send only items, address, and paymentMethod
+      const orderData = {
+        items: cartItems.map((item) => ({
+          productId: item.product._id,
+          quantity: item.quantity,
+        })),
+        address,
+        paymentMethod,
+      };
+
+      const res = await fetch("http://localhost:5050/api/orders", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(orderData),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) throw new Error(data.message || "Failed to place order");
+
+      toast.success("Order placed successfully!");
+      navigate("/"); // Go back to homepage
+    } catch (error) {
+      console.error(error);
+      toast.error(error.message || "Failed to place order");
+    }
   };
 
   return (
@@ -92,7 +121,7 @@ export default function CheckoutPage() {
       <div className="min-h-screen bg-[#FFF8F0] py-16 px-6 relative">
         {/* Close Checkout Button */}
         <button
-          onClick={() => navigate("/")} // Close checkout
+          onClick={() => navigate("/")}
           className="absolute top-6 right-6 text-gray-500 hover:text-red-500 bg-white rounded-full p-2 shadow"
         >
           <X size={24} />
